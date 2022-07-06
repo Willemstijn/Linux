@@ -545,3 +545,57 @@ To add an exception for this directory, call:
 
 	git config --global --add safe.directory /opt/freqtrade
 ```
+
+# Github course LinkedIn Learning
+
+```
+git diff 				> Show differences between modified files in repo.
+git log --oneline 			> Show git log with single lines (compressed view of log).
+git diff [commit code number] 		> Show differences between current repo version and earlier git status.
+
+git commit --amend 			> When you realised that you forgot some minor changes to add to the previous commit. You then can add these new changes to the last commit, without having to create a whole new commit.
+git reset [commit code number] 		> Rewind to earlier commit(s). It will NOT change the files in their previous state. But prepares the repo for a new commit with the changes you made.
+git reset --hard [commit code number] 	> Rewind to earlier commit(s). But also will change the files to their previous state (so all changes you made will be removed).
+git restore .				> Restore repo to the state after the previous commit. Removes all changes. Can also be used on single file (after "git status").
+
+git rebase -i --root 			> Move the current commit to a certain point in the commit history. -i = interactive (manualy) move the current commit somewhere in the commit history of the repo.
+					  Other options (squash or fixup) can be added in the interactive file (e.g. "f 1badf86 Updated license").
+git rebase -i HEAD~3			> Move the current commit to a certain point in the commit history. Here from the most recent to recent minus 3 commits.
+
+git branch				> Show all branches.
+git branch -a				> Show all branches, including the remote ones.
+git switch -c BRANCH			> Create/Switch to other branch (replaces "git checkout -b NAME" command).
+git switch BRANCH			> Switch between branches with checkout (replaces "git checkout BRANCH").
+git merge BRANCH			> Merge the changes from BRANCH into the current branch.
+git branch -d BRANCH			> Delete branch BRANCH (after merge).
+
+git stash				> Temporarily stash away code so that you can work on something else (restores to previous state but keeps changes you worked on).
+git stash list				> List all the stashes.
+git stash apply				> Apply the set of changes in a stash.
+git stash pop				> Remove the git stash from the list. Should be used in combination with "git restore .".
+
+git clean				> Remove untracked files from the repository. Git restore only handles tracked files and leaves untracked files alone (so does not clean).
+git clean -n				> dry-run  - Very convienient for checking what gets removed.
+git clean -d				> clean directories
+git clean -f				> force clean
+```
+
+GITHUB commands
+
+```
+git remote add NAME URL			> Adding a remote location to the repository to upload/sync (You can actually add multiple remote locations for uploading...).
+git remote remove NAME			> Remove the remote location.
+git rename OLDNAME NEWNAME		> Rename the remote location (rename to github??).
+git remote				> Show the remote locations.
+git remote -v				> Show the remote locations.
+git remote add origin URL		> Set the remote github url repo as upstream location (see top of this section).
+
+git push --all				> Push all changes in all local branches to upstream location (Github).
+git push -u origin main			> Push only the main branch to the origin remote location.
+git push --set-upstream-to origin main	> Same command as above but totally written out -u switch.
+git branch --set-upstream-to <origin/remote branch>	> Initial set a local branch upstream location. Needed when syncing a new local branch to github.
+
+git clone GIT_URL			> Clone a github repository to the local folder.
+git fetch				> Look at github data and download information to local repo. Not the actual files.
+git pull				> Complete sync of local repo with github. Including files.
+```
