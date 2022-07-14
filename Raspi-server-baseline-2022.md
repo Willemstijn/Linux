@@ -1,6 +1,11 @@
-Onderstaande vernieuwde instructies voor het configureren van een nieuwe Raspberry Pi server
+Instructions below to configure a completely fresh Rasperry Pi server.
 
-# Starten zonder Xwindows
+# Initial setup with Raspi-config
+
+## Require user to log in || Start without XWindows
+
+When you want to have to log in at the TTY console with a password as well (default is automatically log in)
+Also applicable if you installed an full PI OS Desktop image with Xwindows and it boots in Xwin.
 
 ```
 sudo raspi-config
@@ -16,7 +21,7 @@ Removed /etc/systemd/system/default.target.
 Created symlink /etc/systemd/system/default.target → /lib/systemd/system/multi-user.target.
 ```
 
-# Disk volledig benutten
+## Use complete disk / SD card
 
 ```
 sudo raspi-config
@@ -24,6 +29,38 @@ sudo raspi-config
 A1 Expand Filesystem Ensures that all of the SD card is available
 
 ```
+
+## Start SSH server at boot
+
+```
+sudo raspi-config
+3 Interface Options
+I2 SSH Enable/disable remote command line access using SSH
+Enable SSH server
+```
+
+## Set system hostname
+
+```
+sudo raspi-config
+1 System options
+S4 Hostname
+```
+
+## Enable / configure Wireless LAN
+
+```
+sudo raspi-config
+1 System options
+S1 Wireless LAN
+NL Netherlands
+Enter SSID
+Enter WiFi Passphrase
+```
+
+You might see a `wlan0: link becomes ready` message appear in the screen.
+
+Finish and reboot to acivate these settings.
 
 # Adding static Ip Addresses to eth0
 
@@ -48,7 +85,7 @@ static routers=192.168.1.1
 static domain_name_servers=192.168.1.1
 ```
 
-# Adding wireless network
+# Adding wireless network manually (raspi-config replacement)
 
 ```
 sudo iwlist wlan0 scan
@@ -65,12 +102,12 @@ update_config=1
 country=NL
 
 network={
-        ssid="TELE2-F35157"
-        psk="45888C324786"
+        ssid="YOUR WIRELESS NETWORK NAME"
+        psk="YOUR WIRELESS NETWORK PASSPHRASE"
 }
 ```
 
-# Changing the Raspi hostname
+# Changing the Raspi hostname (raspi-config replacement)
 
 Edit the following files and add hostname
 
@@ -90,7 +127,7 @@ Change the entry after the 127.0.0.1 to the same name as in hostname
 
 Finish and Reboot
 
-# Changing the default keyboard layout
+# Changing the default keyboard layout (raspi-config replacement)
 
 If you have a standard US keyboard and the raspberry does not show the right keys, its time to change the following file to math your keyboard layout.
 
