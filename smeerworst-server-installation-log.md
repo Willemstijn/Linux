@@ -345,9 +345,154 @@ sudo apt install unattended-upgrades
 sudo dpkg-reconfigure --priority=low unattended-upgrades
 ```
 
-# Install Docker and Docker compose
+# Installing other programs & stuff
 
 > This is were the fun begins!
+
+The following list of programms are added with apt-get:
+
+```
+sudo apt install mc
+```
+
+# Mounting addidional disks
+
+Follow the procedure below to add additional disks to the system:
+
+Find out what is attached with ``lsblk``
+
+```
+lsblk
+
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda      8:0    0 223,6G  0 disk
+├─sda1   8:1    0   512M  0 part /boot/efi
+└─sda2   8:2    0 223,1G  0 part /
+sdb      8:16   0   3,7T  0 disk
+└─sdb1   8:17   0   3,7T  0 part
+```
+
+Find if any of them is mounted with ``findmnt`` (or ``mount -l``)
+
+```
+findmnt
+
+TARGET                                SOURCE     FSTYPE     OPTIONS
+/                                     /dev/sda2  ext4       rw,relatime,errors=remount-ro
+├─/sys                                sysfs      sysfs      rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/kernel/security              securityfs securityfs rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/fs/cgroup                    tmpfs      tmpfs      ro,nosuid,nodev,noexec,mode=755
+│ │ ├─/sys/fs/cgroup/unified          cgroup2    cgroup2    rw,nosuid,nodev,noexec,relatime,nsdelegate
+│ │ ├─/sys/fs/cgroup/systemd          cgroup     cgroup     rw,nosuid,nodev,noexec,relatime,xattr,name=systemd
+│ │ ├─/sys/fs/cgroup/perf_event       cgroup     cgroup     rw,nosuid,nodev,noexec,relatime,perf_event
+│ │ ├─/sys/fs/cgroup/net_cls,net_prio cgroup     cgroup     rw,nosuid,nodev,noexec,relatime,net_cls,net_prio
+│ │ ├─/sys/fs/cgroup/cpu,cpuacct      cgroup     cgroup     rw,nosuid,nodev,noexec,relatime,cpu,cpuacct
+│ │ ├─/sys/fs/cgroup/cpuset           cgroup     cgroup     rw,nosuid,nodev,noexec,relatime,cpuset
+│ │ ├─/sys/fs/cgroup/hugetlb          cgroup     cgroup     rw,nosuid,nodev,noexec,relatime,hugetlb
+│ │ ├─/sys/fs/cgroup/rdma             cgroup     cgroup     rw,nosuid,nodev,noexec,relatime,rdma
+│ │ ├─/sys/fs/cgroup/freezer          cgroup     cgroup     rw,nosuid,nodev,noexec,relatime,freezer
+│ │ ├─/sys/fs/cgroup/pids             cgroup     cgroup     rw,nosuid,nodev,noexec,relatime,pids
+│ │ ├─/sys/fs/cgroup/memory           cgroup     cgroup     rw,nosuid,nodev,noexec,relatime,memory
+│ │ ├─/sys/fs/cgroup/blkio            cgroup     cgroup     rw,nosuid,nodev,noexec,relatime,blkio
+│ │ └─/sys/fs/cgroup/devices          cgroup     cgroup     rw,nosuid,nodev,noexec,relatime,devices
+│ ├─/sys/fs/pstore                    pstore     pstore     rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/firmware/efi/efivars         efivarfs   efivarfs   rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/fs/bpf                       none       bpf        rw,nosuid,nodev,noexec,relatime,mode=700
+│ ├─/sys/kernel/debug                 debugfs    debugfs    rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/kernel/tracing               tracefs    tracefs    rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/fs/fuse/connections          fusectl    fusectl    rw,nosuid,nodev,noexec,relatime
+│ └─/sys/kernel/config                configfs   configfs   rw,nosuid,nodev,noexec,relatime
+├─/proc                               proc       proc       rw,nosuid,nodev,noexec,relatime
+│ └─/proc/sys/fs/binfmt_misc          systemd-1  autofs     rw,relatime,fd=28,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=18576
+├─/dev                                udev       devtmpfs   rw,nosuid,noexec,relatime,size=4018108k,nr_inodes=1004527,mode=755
+│ ├─/dev/pts                          devpts     devpts     rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000
+│ ├─/dev/shm                          tmpfs      tmpfs      rw,nosuid,nodev
+│ ├─/dev/mqueue                       mqueue     mqueue     rw,nosuid,nodev,noexec,relatime
+│ └─/dev/hugepages                    hugetlbfs  hugetlbfs  rw,relatime,pagesize=2M
+├─/run                                tmpfs      tmpfs      rw,nosuid,nodev,noexec,relatime,size=813016k,mode=755
+│ ├─/run/lock                         tmpfs      tmpfs      rw,nosuid,nodev,noexec,relatime,size=5120k
+│ └─/run/user/1000                    tmpfs      tmpfs      rw,nosuid,nodev,relatime,size=813012k,mode=700,uid=1000,gid=1000
+└─/boot/efi                           /dev/sda1  vfat       rw,relatime,fmask=0077,dmask=0077,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro
+```
+
+Disk sdb1 is not used here...
+
+Mount the drive to a location on the disk. In my case I use /mnt.
+
+```
+sudo mount -t auto /dev/sdb1 /mnt
+```
+
+To find out the disk file type, use the following command ``df -Th``
+
+```
+df -Th
+
+Filesystem     Type      Size  Used Avail Use% Mounted on
+udev           devtmpfs  3,9G     0  3,9G   0% /dev
+tmpfs          tmpfs     794M  1,2M  793M   1% /run
+/dev/sda2      ext4      219G  9,2G  199G   5% /
+tmpfs          tmpfs     3,9G     0  3,9G   0% /dev/shm
+tmpfs          tmpfs     5,0M  4,0K  5,0M   1% /run/lock
+tmpfs          tmpfs     3,9G     0  3,9G   0% /sys/fs/cgroup
+/dev/sda1      vfat      511M  5,3M  506M   2% /boot/efi
+tmpfs          tmpfs     794M  4,0K  794M   1% /run/user/1000
+/dev/sdb1      ext4      3,6T   28K  3,4T   1% /mnt
+```
+
+sdb1 is of type ext4 and almost completely empty, which is fortunate for me!
+
+## Mount disk at boot with fstab
+
+Find out the UUID of the disk you want to mount:
+
+```
+sudo blkid -p /dev/sdb1
+
+/dev/sdb1: LABEL="bigdisk" UUID="5d437851-5667-4907-888c-5372028c6342" VERSION="1.0" TYPE="ext4" USAGE="filesystem" PART_ENTRY_SCHEME="gpt" PART_ENTRY_UUID="9a12b6c1-b954-4883-b3ab-527570d21f56" PART_ENTRY_TYPE="0fc63daf-8483-4772-8e79-3d69d8477de4" PART_ENTRY_NUMBER="1" PART_ENTRY_OFFSET="2048" PART_ENTRY_SIZE="7814033408" PART_ENTRY_DISK="8:16"
+```
+
+Make a copy of /etc/fstab:
+
+```
+sudo cp /etc/fstab{,.org}
+```
+
+Then add the following to the file to make the sdb1 disk mount at sysetm boot:
+
+```
+# 4 TB harddrive on /dev/sdb1
+UUID=5d437851-5667-4907-888c-5372028c6342 /mnt ext4 defaults 0 2
+```
+
+So fstab should look like this now:
+
+```
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/sda2 during installation
+UUID=2c91431f-6e42-46d3-bba1-22e7c013481a /               ext4    errors=remount-ro 0       1
+# /boot/efi was on /dev/sda1 during installation
+UUID=B419-BD4C  /boot/efi       vfat    umask=0077      0       1
+/swapfile                                 none            swap    sw              0       0
+# 4 TB harddrive on /dev/sdb1
+UUID=5d437851-5667-4907-888c-5372028c6342 /mnt ext4 defaults 0 2
+```
+
+Let's do a reboot and see if everything that we did so far also works after the system has booted...
+
+```
+ sudo shutdown -r now
+```
+
+Now that the system is configured, we can start with installing additional programs...
+
+# Install Docker and Docker compose
 
 This information comes from my [Docker commands sheet](https://github.com/Willemstijn/Linux/blob/main/Docker%20commands.md).
 
@@ -397,3 +542,4 @@ docker --version
 
 Docker version 20.10.12, build 20.10.12-0ubuntu2~20.04.1
 ```
+
