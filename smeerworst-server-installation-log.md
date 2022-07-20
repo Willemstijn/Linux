@@ -1,12 +1,12 @@
-# LOG
+# Intro
 
-This log contains all commands and information that i gathered to install and configure my Linux Mint 20.3 based "Domotica & more" server.
+This log contains all commands and information that I gathered to install and configure my Linux Mint 20.3 based "Domotica & more" server.
 
 # Initial installation
 
 Download and install the latest version of Linux Mint XFCE edition (lightweight) on the server from the [Linux Mint website](https://linuxmint.com/edition.php?id=294) [(iso here)](https://mirrors.layeronline.com/linuxmint/stable/20.3/linuxmint-20.3-xfce-64bit.iso). 
 
-## Update
+# Update
 
 After installation, update the system from the terminal with the following commands:
 
@@ -15,9 +15,9 @@ sudo apt update
 sudo apt upgrade
 ```
 
-## Network address
+# Network address
 
-### First method
+## First method
 
 By default, the server has a DHCP enabled ethernet interface. Since this is a server, it should be static so that I can always reach it on it's default IP address. 
 
@@ -29,7 +29,7 @@ The following step is to change the “IPv4 CONFIGURATION” setting from automa
 
 ``ip a``
 
-### Second method
+## Second method
 
 You can also set static IP addresses by making changes to the network configuration file. To do so, open the file with your preferred editor:
 
@@ -61,7 +61,7 @@ or
 
 ``ifconfig``
 
-## Starting the server in terminal mode by default
+# Starting the server in terminal mode by default
 
 Normally Linux Mint starts in X windows. But since this will be a headless server, it is not necessary. Therefore, after boot it will start in terminal mode (which also will save resources and is safer). 
 
@@ -77,3 +77,6 @@ To return to default booting into X, use
 
 ``sudo systemctl set-default graphical.target``
 
+# Disabling unneeded services
+
+This is a security item. There is no need for some service since I do not use them. Also it will prevent additional possbible security leaks.
