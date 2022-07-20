@@ -260,3 +260,36 @@ options edns0 trust-ad
 nameserver 208.67.222.222
 nameserver 208.67.220.220
 ```
+
+# SSH server configuration
+
+To make SSH more secure, the following configuration should be used:
+
+Create backup of original ssh config
+
+```
+sudo cp /etc/ssh/sshd_config{,.bak}
+sudo nano /etc/ssh/sshd_config
+```
+
+Then change the config so that it looks line this:
+
+```
+Include /etc/ssh/sshd_config.d/*.conf
+SyslogFacility AUTH
+LogLevel INFO
+LoginGraceTime 120
+PermitRootLogin no
+StrictModes yes
+X11Forwarding no
+X11DisplayOffset 10
+ChallengeResponseAuthentication no
+UsePAM yes
+AcceptEnv LANG LC_*
+Subsystem       sftp    /usr/lib/openssh/sftp-server
+PrintMotd no
+```
+
+Restart server with:
+
+``sudo systemctl restart ssh``
