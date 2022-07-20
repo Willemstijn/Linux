@@ -335,3 +335,65 @@ date
 
 Wed 20 Jul 2022 10:53:12 AM CEST
 ```
+
+# Install unattended updates
+
+To keep the server up-to-date with the latest stable packages and security fixes, use the unattended upgrades package.
+
+```
+sudo apt install unattended-upgrades
+sudo dpkg-reconfigure --priority=low unattended-upgrades
+```
+
+# Install Docker and Docker compose
+
+> This is were the fun begins!
+
+This information comes from my [Docker commands sheet](https://github.com/Willemstijn/Linux/blob/main/Docker%20commands.md).
+
+```
+sudo apt-get update
+sudo apt-get upgrade
+```
+
+Ten install Docker with
+
+```
+sudo apt install docker*
+
+
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+Note, selecting 'docker-compose' for glob 'docker*'
+Note, selecting 'docker' for glob 'docker*'
+Note, selecting 'docker.io-doc' for glob 'docker*'
+Note, selecting 'docker2aci' for glob 'docker*'
+Note, selecting 'docker-registry' for glob 'docker*'
+Note, selecting 'docker-doc' for glob 'docker*'
+Note, selecting 'docker-ce' for glob 'docker*'
+Note, selecting 'docker.io' for glob 'docker*'
+Note, selecting 'docker-doc' instead of 'docker.io-doc'
+The following additional packages will be installed:
+  bridge-utils containerd git git-man liberror-perl pigz python3-attr python3-cached-property python3-distutils python3-docker python3-dockerpty python3-docopt python3-importlib-metadata
+  python3-jsonschema python3-lib2to3 python3-more-itertools python3-pyrsistent python3-setuptools python3-texttable python3-websocket python3-zipp runc ubuntu-fan wmdocker
+Suggested packages:
+  aufs-tools cgroupfs-mount | cgroup-lite debootstrap rinse zfs-fuse | zfsutils git-daemon-run | git-daemon-sysvinit git-doc git-el git-email git-gui gitk gitweb git-cvs git-mediawiki
+  git-svn python-attr-doc python-jsonschema-doc python-setuptools-doc
+The following NEW packages will be installed:
+  bridge-utils containerd docker docker-compose docker-doc docker-registry docker.io docker2aci git git-man liberror-perl pigz python3-attr python3-cached-property python3-distutils
+  python3-docker python3-dockerpty python3-docopt python3-importlib-metadata python3-jsonschema python3-lib2to3 python3-more-itertools python3-pyrsistent python3-setuptools
+  python3-texttable python3-websocket python3-zipp runc ubuntu-fan wmdocker
+0 upgraded, 30 newly installed, 0 to remove and 0 not upgraded.
+Need to get 83,6 MB of archives.
+After this operation, 404 MB of additional disk space will be used.
+Do you want to continue? [Y/n]
+```
+
+Now check the Docker version with:
+
+```
+docker --version
+
+Docker version 20.10.12, build 20.10.12-0ubuntu2~20.04.1
+```
