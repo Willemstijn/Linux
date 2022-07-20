@@ -80,3 +80,183 @@ To return to default booting into X, use
 # Disabling unneeded services
 
 This is a security item. There is no need for some service since I do not use them. Also it will prevent additional possbible security leaks.
+
+```
+ sudo netstat -tulpan
+
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      655/systemd-resolve
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      760/sshd: /usr/sbin
+tcp        0      0 127.0.0.1:631           0.0.0.0:*               LISTEN      676/cupsd
+tcp        0     80 192.168.1.5:22          192.168.1.204:50696     ESTABLISHED 1197/sshd: bas [pri
+tcp6       0      0 :::22                   :::*                    LISTEN      760/sshd: /usr/sbin
+tcp6       0      0 ::1:631                 :::*                    LISTEN      676/cupsd
+udp        0      0 127.0.0.53:53           0.0.0.0:*                           655/systemd-resolve
+udp        0      0 192.168.1.5:123         0.0.0.0:*                           755/ntpd
+udp        0      0 127.0.0.1:123           0.0.0.0:*                           755/ntpd
+udp        0      0 0.0.0.0:123             0.0.0.0:*                           755/ntpd
+udp        0      0 0.0.0.0:631             0.0.0.0:*                           736/cups-browsed
+udp        0      0 0.0.0.0:5353            0.0.0.0:*                           674/avahi-daemon: r
+udp        0      0 0.0.0.0:54826           0.0.0.0:*                           674/avahi-daemon: r
+udp6       0      0 fe80::e2fc:197e:c76:123 :::*                                755/ntpd
+udp6       0      0 ::1:123                 :::*                                755/ntpd
+udp6       0      0 :::123                  :::*                                755/ntpd
+udp6       0      0 :::5353                 :::*                                674/avahi-daemon: r
+udp6       0      0 :::34640                :::*                                674/avahi-daemon: r
+```
+
+Another way of seeing which services are enabled by default is:
+
+```
+ sudo service --status-all
+
+ [ + ]  acpid
+ [ - ]  alsa-utils
+ [ - ]  anacron
+ [ + ]  apparmor
+ [ + ]  avahi-daemon
+ [ - ]  bluetooth
+ [ - ]  console-setup.sh
+ [ + ]  cron
+ [ - ]  cryptdisks
+ [ - ]  cryptdisks-early
+ [ + ]  cups
+ [ + ]  cups-browsed
+ [ + ]  dbus
+ [ - ]  dns-clean
+ [ - ]  grub-common
+ [ + ]  hddtemp
+ [ - ]  hwclock.sh
+ [ + ]  irqbalance
+ [ + ]  kerneloops
+ [ - ]  keyboard-setup.sh
+ [ + ]  kmod
+ [ - ]  lightdm
+ [ + ]  lm-sensors
+ [ - ]  lvm2
+ [ - ]  lvm2-lvmpolld
+ [ - ]  mintsystem
+ [ + ]  network-manager
+ [ - ]  networking
+ [ + ]  ntp
+ [ + ]  openvpn
+ [ - ]  plymouth
+ [ - ]  plymouth-log
+ [ - ]  pppd-dns
+ [ + ]  procps
+ [ - ]  pulseaudio-enable-autospawn
+ [ - ]  rsync
+ [ + ]  rsyslog
+ [ - ]  saned
+ [ - ]  speech-dispatcher
+ [ + ]  ssh
+ [ + ]  udev
+ [ + ]  ufw
+ [ - ]  uuidd
+ [ - ]  x11-common
+```
+
+The following service ports should be disables:
+
+* 53
+* 631
+* 5353
+* 123
+
+This can be done byfollowing:
+
+## systemd
+
+```
+sudo systemctl status systemd-resolved
+sudo systemctl stop systemd-resolved
+sudo systemctl disable systemd-resolved
+sudo systemctl status systemd-resolved
+```
+
+## cups
+
+```
+sudo systemctl status cups
+sudo systemctl stop cups
+sudo systemctl disable cups
+sudo systemctl status cups
+```
+
+and
+
+```
+sudo systemctl status cups-browsed
+sudo systemctl stop cups-browsed
+sudo systemctl disable cups-browsed
+sudo systemctl status cups-browsed
+```
+
+## avahi-daemon
+
+```
+sudo systemctl status avahi-daemon
+sudo systemctl stop avahi-daemon
+sudo systemctl disable avahi-daemon
+sudo systemctl status avahi-daemon
+```
+
+## ntp
+
+```
+sudo systemctl status ntp
+sudo systemctl stop ntp
+sudo systemctl disable ntp
+sudo systemctl status ntp
+```
+
+Now only this service is actively listening on a port:
+
+```
+ sudo netstat -tulpan
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      760/sshd: /usr/sbin
+tcp        0     64 192.168.1.5:22          192.168.1.204:51225     ESTABLISHED 1526/sshd: bas [pri
+tcp6       0      0 :::22                   :::*                    LISTEN      760/sshd: /usr/sbin
+```
+
+# Firewall
+
+To install a firewall, do:
+
+``sudo apt install ufw``
+
+Add ssh port to the firewall and enable it
+
+```
+sudo ufw allow ssh/tcp
+sudo ufw limit ssh/tcp
+sudo ufw enable
+sudo ufw status
+```
+
+Other ports can be added with the following command:
+
+``ufw allow [PORT]/tcp``
+
+See also my [Server baseling document](https://github.com/Willemstijn/Linux/blob/main/Server-baseline.md#adding-exceptions-for-services)
+
+# Nameserver
+
+To install the correct nameserver, do the following:
+
+```
+sudo cp /etc/resolv.conf{,.org}
+sudo nano /etc/resolv.conf
+```
+
+Make the config look like this:
+
+```
+#nameserver 127.0.0.53
+options edns0 trust-ad
+nameserver 208.67.222.222
+nameserver 208.67.220.220
+```
