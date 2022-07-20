@@ -162,7 +162,8 @@ The following service ports should be disables:
 * 53
 * 631
 * 5353
-* 123
+
+(The time service is needed to sync the servers time for use with a trading bot and domotica)
 
 This can be done byfollowing:
 
@@ -202,24 +203,26 @@ sudo systemctl disable avahi-daemon
 sudo systemctl status avahi-daemon
 ```
 
-## ntp
-
-```
-sudo systemctl status ntp
-sudo systemctl stop ntp
-sudo systemctl disable ntp
-sudo systemctl status ntp
-```
-
 Now only this service is actively listening on a port:
 
 ```
- sudo netstat -tulpan
+sudo netstat -tulpan
+
 Active Internet connections (servers and established)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      760/sshd: /usr/sbin
-tcp        0     64 192.168.1.5:22          192.168.1.204:51225     ESTABLISHED 1526/sshd: bas [pri
-tcp6       0      0 :::22                   :::*                    LISTEN      760/sshd: /usr/sbin
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      3289/sshd: /usr/sbi
+tcp        0      0 192.168.1.5:22          192.168.1.204:51225     ESTABLISHED 1526/sshd: bas [pri
+tcp        0      0 192.168.1.5:22          192.168.1.204:51966     ESTABLISHED 3214/sshd: bas [pri
+tcp        0    272 192.168.1.5:22          192.168.1.204:52186     ESTABLISHED 3388/sshd: bas [pri
+tcp        0      0 192.168.1.5:22          192.168.1.204:51877     ESTABLISHED 3063/sshd: bas [pri
+tcp6       0      0 :::22                   :::*                    LISTEN      3289/sshd: /usr/sbi
+udp        0      0 192.168.1.5:123         0.0.0.0:*                           3683/ntpd
+udp        0      0 127.0.0.1:123           0.0.0.0:*                           3683/ntpd
+udp        0      0 0.0.0.0:123             0.0.0.0:*                           3683/ntpd
+udp6       0      0 fe80::e2fc:197e:c76:123 :::*                                3683/ntpd
+udp6       0      0 ::1:123                 :::*                                3683/ntpd
+udp6       0      0 :::123                  :::*                                3683/ntpd
+
 ```
 
 # Firewall
@@ -293,3 +296,42 @@ PrintMotd no
 Restart server with:
 
 ``sudo systemctl restart ssh``
+
+# Synchronise with NTP
+
+To make the server synchronise with a time server, do the following:
+
+```
+sudo cp /etc/systemd/timesyncd.conf{,.org}
+sudo nano /etc/systemd/timesyncd.conf
+```
+
+Change the config to the following:
+
+```
+[Time]
+NTP=0.nl.pool.ntp.org  
+FallbackNTP=0.europe.pool.ntp.org 1.europe.pool.ntp.org
+```
+
+Check the timedatectl
+
+```
+timedatectl status
+
+               Local time: Wed 2022-07-20 10:52:23 CEST
+           Universal time: Wed 2022-07-20 08:52:23 UTC
+                 RTC time: Wed 2022-07-20 08:52:23
+                Time zone: Europe/Amsterdam (CEST, +0200)
+System clock synchronized: yes
+              NTP service: n/a
+          RTC in local TZ: no
+```
+
+Check the date and time
+
+```
+date
+
+Wed 20 Jul 2022 10:53:12 AM CEST
+```
