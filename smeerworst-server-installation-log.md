@@ -543,3 +543,14 @@ docker --version
 Docker version 20.10.12, build 20.10.12-0ubuntu2~20.04.1
 ```
 
+## Downloading backups of configuration files from a network share
+
+Because my backups are on a network share, I have to download them in this server. This can be done by mounting the share to a local folder and then downloading the necessary files...
+
+To mount the external drive/share, use the next command:
+
+```
+mkdir /home/bas/Remote
+
+mount.cifs //192.168.1.3/ActiveBackup /home/bas/Remote -o user=[USERNAAM],pass=[PASSWORD],vers=2.0
+```
