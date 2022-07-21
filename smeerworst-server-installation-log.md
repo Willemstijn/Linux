@@ -248,6 +248,8 @@ See also my [Server baseling document](https://github.com/Willemstijn/Linux/blob
 
 # Nameserver
 
+After removing the systemd-resolved service, you should check if the file /etc/resolv.conf still exists or is a dead symlink.
+
 To install the correct nameserver, do the following:
 
 ```
@@ -334,25 +336,6 @@ Check the date and time
 date
 
 Wed 20 Jul 2022 10:53:12 AM CEST
-```
-
-# Install unattended updates
-
-To keep the server up-to-date with the latest stable packages and security fixes, use the unattended upgrades package.
-
-```
-sudo apt install unattended-upgrades
-sudo dpkg-reconfigure --priority=low unattended-upgrades
-```
-
-# Installing other programs & stuff
-
-> This is were the fun begins!
-
-The following list of programms are added with apt-get:
-
-```
-sudo apt install mc
 ```
 
 # Mounting addidional disks
@@ -492,6 +475,25 @@ Let's do a reboot and see if everything that we did so far also works after the 
 
 Now that the system is configured, we can start with installing additional programs...
 
+# Install unattended updates
+
+To keep the server up-to-date with the latest stable packages and security fixes, use the unattended upgrades package.
+
+```
+sudo apt install unattended-upgrades
+sudo dpkg-reconfigure --priority=low unattended-upgrades
+```
+
+# Installing other programs & stuff
+
+> This is were the fun begins!
+
+The following list of programms are added with apt-get:
+
+```
+sudo apt install mc  python3-pip python-is-python3
+```
+
 # Install Docker and Docker compose
 
 This information comes from my [Docker commands sheet](https://github.com/Willemstijn/Linux/blob/main/Docker%20commands.md).
@@ -552,5 +554,15 @@ To mount the external drive/share, use the next command:
 ```
 mkdir /home/bas/Remote
 
-mount.cifs //192.168.1.3/ActiveBackup /home/bas/Remote -o user=[USERNAAM],pass=[PASSWORD],vers=2.0
+sudo mount.cifs //192.168.1.3/ActiveBackup /home/bas/Remote -o user=[USERNAAM],pass=[PASSWORD],vers=2.0
 ```
+
+Then just use Midnight Commander to copy files from one location to the other.
+
+# Installing programs 
+
+## Bitcoinlottery
+
+See [Bitcoinlottery github repo](https://github.com/Willemstijn/BitcoinLottery).
+
+## 
