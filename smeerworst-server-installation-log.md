@@ -634,6 +634,7 @@ So far the folowing programs are running by means of a docker container:
 - zwavejs2mqtt
 - mosquitto
 - nginx
+- portainer
 
 ## Downloading backups of configuration files from a network share
 
