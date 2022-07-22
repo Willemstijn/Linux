@@ -655,4 +655,6 @@ Then just use Midnight Commander to copy files from one location to the other.
 
 See [Bitcoinlottery github repo](https://github.com/Willemstijn/BitcoinLottery).
 
-## 
+## CandleHoarder
+
+See [CandleHoarder github repo](https://github.com/Willemstijn/CandleHoarder).
