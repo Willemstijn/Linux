@@ -545,6 +545,24 @@ docker --version
 Docker version 20.10.12, build 20.10.12-0ubuntu2~20.04.1
 ```
 
+## Docker and ufw
+
+Before we continue. There was a problem where I could reach ports of docker containers, while ufw was blocking them all. There also were no indications that thes ports were allowed by ufw. Nonetheless I could still reach these ports (e.g. port 80 of nginx was open before there even was a firewall rule to let this traffic pass).
+
+It turns out that Docker makes changes directly on your iptables, which are not shown with ufw status.
+
+I had to create the file /etc/docker/daemon.json and put the following in:
+
+```
+{
+    "iptables": false
+}
+```
+
+I then issued ``sudo service docker stop`` then ``sudo service docker start`` FINALLY docker is simply following the appropriate rules in UFW. 
+
+See also [here](https://askubuntu.com/questions/652556/uncomplicated-firewall-ufw-is-not-blocking-anything-when-using-docker)
+
 ## Docker containers
 
 All Docker images and containers will be handled by docker compose. The most easy way to handle this is by making one docker expose file and adding all these containers to it, so to manage all running containers from one file. This makes it easier to backup and restore.
