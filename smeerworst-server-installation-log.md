@@ -545,9 +545,27 @@ docker --version
 Docker version 20.10.12, build 20.10.12-0ubuntu2~20.04.1
 ```
 
+## Docker containers
+
+All Docker images and containers will be handled by docker compose. The most easy way to handle this is by making one docker expose file and adding all these containers to it, so to manage all running containers from one file. This makes it easier to backup and restore.
+
+Also all other container configurations will be located in one single directory: ``/opt``
+
+This way there is only one complete directory to backup and restore in combination with only one docker-compose.yml file.
+
+The actual docker-compose file I use is managed via [this github repository](https://github.com/Willemstijn/dockerstack).
+
+So far the folowing programs are running by means of a docker container:
+
+- freqtrade
+- home assistant
+- zwavejs2mqtt
+- mosquitto
+- nginx
+
 ## Downloading backups of configuration files from a network share
 
-Because my backups are on a network share, I have to download them in this server. This can be done by mounting the share to a local folder and then downloading the necessary files...
+Because my backups are kept on a network share, I have to download them in this server. This can be done by mounting the share to a local folder and then downloading the necessary files...
 
 To mount the external drive/share, use the next command:
 
@@ -559,7 +577,7 @@ sudo mount.cifs //192.168.1.3/ActiveBackup /home/bas/Remote -o user=[USERNAAM],p
 
 Then just use Midnight Commander to copy files from one location to the other.
 
-# Installing programs 
+# Installing non-Docker programs 
 
 ## Bitcoinlottery
 
