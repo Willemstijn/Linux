@@ -244,6 +244,37 @@ Other ports can be added with the following command:
 
 ``ufw allow [PORT]/tcp``
 
+Or ports can be removed with the following procedure:
+
+```
+# sudo ufw status numbered
+
+Status: active
+
+     To                         Action      From
+     --                         ------      ----
+[ 1] 22/tcp                     ALLOW IN    Anywhere
+[ 2] 22/tcp (v6)                ALLOW IN    Anywhere (v6)
+[ 3] 9000/tcp (v6)              ALLOW IN    Anywhere (v6)
+
+# ufw delete 3
+
+Deleting:
+ allow 9000/tcp
+Proceed with operation (y|n)? y
+Rule deleted (v6)
+
+# sudo ufw status numbered
+
+Status: active
+
+     To                         Action      From
+     --                         ------      ----
+[ 1] 22/tcp                     ALLOW IN    Anywhere
+[ 2] 22/tcp (v6)                ALLOW IN    Anywhere (v6)
+
+```
+
 See also my [Server baseling document](https://github.com/Willemstijn/Linux/blob/main/Server-baseline.md#adding-exceptions-for-services)
 
 # Nameserver
