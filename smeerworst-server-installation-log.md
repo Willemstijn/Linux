@@ -275,9 +275,9 @@ It seems that after each reboot, network manager overwrites ``resolv.conf`` with
 nameserver 127.0.0.53
 ```
 
-Why that is so is beoynd my comprehension... However I have to do the following to make it work once again:
+Why that is so is beyond my comprehension... However I have to do the following to make it work once again:
 
-First open the nm conf file ``/etc/NetworkManager/NetworkManager.conf``:
+First open the network manager conf file ``/etc/NetworkManager/NetworkManager.conf``:
 
 ```
 sudo nano /etc/NetworkManager/NetworkManager.conf
@@ -616,6 +616,82 @@ I had to create the file /etc/docker/daemon.json and put the following in:
 I then issued ``sudo service docker stop`` then ``sudo service docker start`` FINALLY docker is simply following the appropriate rules in UFW. 
 
 See also [here](https://askubuntu.com/questions/652556/uncomplicated-firewall-ufw-is-not-blocking-anything-when-using-docker)
+
+But the story continues about that...
+
+## Docker and name resolution
+
+At some point freqtrade was broken. After investigation it seems like that the iptables entry causes docker to be very strict with it's firewall (no outside traffic or DNS querie possible, or whatever
+
+```
+freqtrade    | 2022-07-23 05:49:58,051 - freqtrade.exchange.exchange - ERROR - Unable to initialize markets.
+freqtrade    | Traceback (most recent call last):
+freqtrade    |   File "/home/ftuser/.local/lib/python3.10/site-packages/urllib3/connection.py", line 174, in _new_conn
+freqtrade    |     conn = connection.create_connection(
+freqtrade    |   File "/home/ftuser/.local/lib/python3.10/site-packages/urllib3/util/connection.py", line 72, in create_connection
+freqtrade    |     for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+freqtrade    |   File "/usr/local/lib/python3.10/socket.py", line 955, in getaddrinfo
+freqtrade    |     for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+freqtrade    | socket.gaierror: [Errno -3] Temporary failure in name resolution
+freqtrade    |
+freqtrade    | During handling of the above exception, another exception occurred:
+freqtrade    |
+freqtrade    | Traceback (most recent call last):
+freqtrade    |   File "/home/ftuser/.local/lib/python3.10/site-packages/urllib3/connectionpool.py", line 703, in urlopen
+freqtrade    |     httplib_response = self._make_request(
+freqtrade    |   File "/home/ftuser/.local/lib/python3.10/site-packages/urllib3/connectionpool.py", line 386, in _make_request
+freqtrade    |     self._validate_conn(conn)
+freqtrade    |   File "/home/ftuser/.local/lib/python3.10/site-packages/urllib3/connectionpool.py", line 1040, in _validate_conn
+freqtrade    |     conn.connect()
+freqtrade    |   File "/home/ftuser/.local/lib/python3.10/site-packages/urllib3/connection.py", line 358, in connect
+freqtrade    |     self.sock = conn = self._new_conn()
+freqtrade    |   File "/home/ftuser/.local/lib/python3.10/site-packages/urllib3/connection.py", line 186, in _new_conn
+freqtrade    |     raise NewConnectionError(
+freqtrade    | urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x7f5d731ccc70>: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution
+```
+
+etc. etc.
+
+When I remove the daemon.json file. Everything works like usual...
+
+```
+2022-07-23 06:13:58,350 - freqtrade.resolvers.strategy_resolver - INFO - Strategy using max_entry_position_adjustment: -1
+2022-07-23 06:13:58,350 - freqtrade.configuration.config_validation - INFO - Validating configuration ...
+2022-07-23 06:13:58,354 - freqtrade.exchange.exchange - INFO - Instance is running with dry_run enabled
+2022-07-23 06:13:58,354 - freqtrade.exchange.exchange - INFO - Using CCXT 1.89.14
+2022-07-23 06:13:58,361 - freqtrade.exchange.exchange - INFO - Using Exchange "Kraken"
+2022-07-23 06:14:01,839 - freqtrade.resolvers.exchange_resolver - INFO - Using resolved exchange 'Kraken'...
+2022-07-23 06:14:02,049 - freqtrade.wallets - INFO - Wallets synced.
+2022-07-23 06:14:02,149 - freqtrade.rpc.rpc_manager - INFO - Enabling rpc.api_server
+2022-07-23 06:14:03,030 - freqtrade.rpc.api_server.webserver - INFO - Starting HTTP Server at 0.0.0.0:8080
+2022-07-23 06:14:03,030 - freqtrade.rpc.api_server.webserver - WARNING - SECURITY WARNING - Local Rest Server listening to external connections
+2022-07-23 06:14:03,030 - freqtrade.rpc.api_server.webserver - WARNING - SECURITY WARNING - This is insecure please set to your loopback,e.g 127.0.0.1 in config.json
+2022-07-23 06:14:03,030 - freqtrade.rpc.api_server.webserver - INFO - Starting Local Rest Server.
+2022-07-23 06:14:03,042 - uvicorn.error - INFO - Started server process [1]
+2022-07-23 06:14:03,042 - uvicorn.error - INFO - Waiting for application startup.
+2022-07-23 06:14:03,043 - uvicorn.error - INFO - Application startup complete.
+2022-07-23 06:14:03,059 - freqtrade.resolvers.iresolver - INFO - Using resolved pairlist VolumePairList from '/freqtrade/freqtrade/plugins/pairlist/VolumePairList.py'...
+2022-07-23 06:14:03,245 - VolumePairList - INFO - Searching 20 pairs: ['BTC/USDT', 'USDC/USDT', 'ETH/USDT', 'ADA/USDT', 'DOT/USDT', 'DAI/USDT', 'EOS/USDT', 'XRP/USDT', 'DOGE/USDT', 'LTC/USDT', 'LINK/USDT', 'BCH/USDT', 'USTC/USDT']
+2022-07-23 06:14:03,249 - freqtrade.strategy.hyper - INFO - No params for buy found, using default values.
+2022-07-23 06:14:03,249 - freqtrade.strategy.hyper - INFO - Strategy Parameter(default): buy_rsi = 30
+2022-07-23 06:14:03,250 - freqtrade.strategy.hyper - INFO - Strategy Parameter(default): exit_short_rsi = 30
+2022-07-23 06:14:03,250 - freqtrade.strategy.hyper - INFO - No params for sell found, using default values.
+2022-07-23 06:14:03,250 - freqtrade.strategy.hyper - INFO - Strategy Parameter(default): sell_rsi = 70
+2022-07-23 06:14:03,251 - freqtrade.strategy.hyper - INFO - Strategy Parameter(default): short_rsi = 70
+2022-07-23 06:14:03,251 - freqtrade.strategy.hyper - INFO - No params for protection found, using default values.
+2022-07-23 06:14:03,251 - freqtrade.plugins.protectionmanager - INFO - No protection Handlers defined.
+2022-07-23 06:14:03,252 - freqtrade.rpc.rpc_manager - INFO - Sending rpc message: {'type': status, 'status': 'running'}
+2022-07-23 06:14:03,252 - freqtrade.worker - INFO - Changing state to: RUNNING
+2022-07-23 06:14:03,252 - freqtrade.rpc.rpc_manager - INFO - Sending rpc message: {'type': warning, 'status': 'Dry run is enabled. All trades are simulated.'}
+2022-07-23 06:14:03,252 - freqtrade.rpc.rpc_manager - INFO - Sending rpc message: {'type': startup, 'status': "*Exchange:* `kraken`\n*Stake per trade:* `100 USDT`\n*Minimum ROI:* `{'60': 0.01, '30': 0.02, '0': 0.04}`\n*Stoploss:* `-0.1`\n*Position adjustment:* `Off`\n*Timeframe:* `5m`\n*Strategy:* `SampleStrategy`"}
+2022-07-23 06:14:03,252 - freqtrade.rpc.rpc_manager - INFO - Sending rpc message: {'type': startup, 'status': "Searching for USDT pairs to buy and sell based on [{'VolumePairList': 'VolumePairList - top 20 volume pairs.'}]"}
+```
+
+After reading, [Docker advised](https://docs.docker.com/network/iptables/#prevent-docker-from-manipulating-iptables) to not use the iptables option, because:
+
+> Setting iptables to false will more than likely break container networking for the Docker engine.
+
+So I enabled this again and removed the firewall rules from ufw. Letting Docker do the firewall stuff for the containers from now on. 
 
 ## Docker containers
 
