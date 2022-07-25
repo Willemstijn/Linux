@@ -742,6 +742,7 @@ So far the folowing programs are running by means of a docker container:
 - mosquitto
 - nginx
 - portainer
+- pihole
 - jupyterlabs
 
 ### Additional container information
@@ -839,12 +840,12 @@ The following services and ports are used on the server:
 |:-:|:-:|:-|:-|
 | 80 | 80 | nginx | Proxying webserver, also with Wiki |
 | 8123 | 8123 | Home assistant | Domotica service |
-|  |  |  |  |
-|  |  |  |  |
+| 3000 | 3000 | Zwavejs2Mqtt | Domotica MQTT service |
+| 1883 | 1883 | Mosquitto | Domotica MQTT service |
 | 9000 | 9000 | Portainer | Docker container management |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| 8080 | 8080 | Freqtrade | Trading bot |
+| 53 | 53 | PiHole DNS | PiHole DNS service port |
+| 67 | 67 | PiHole DHCP | PiHole DHCP port (not in use) |
+| 81 | 80 | PiHole Web | PiHole administration interface |
+| 8888 | 8888 | Jupyter | Jupyterlabs notebook service |
 |  |  |  |  |
