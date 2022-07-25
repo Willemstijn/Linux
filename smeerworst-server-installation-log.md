@@ -742,6 +742,70 @@ So far the folowing programs are running by means of a docker container:
 - mosquitto
 - nginx
 - portainer
+- jupyterlabs
+
+### Additional container information
+
+All containers are managed with Portainer. All configuration files are located in ``/opt/`` for an easy backup.
+
+It has the following directory structure:
+
+```
+tree -L 2 -d /opt/
+
+/opt/
+├── BitcoinLottery
+│   └── __pycache__
+├── CandleHoarder
+│   ├── data
+│   ├── log
+│   ├── mdwiki
+│   ├── misc
+│   ├── modules
+│   ├── notebooks
+│   └── __pycache__
+├── containerd
+│   ├── bin
+│   └── lib
+├── domotica
+│   ├── domoticz
+│   ├── hass
+│   ├── mqtt
+│   └── zwavejs2mqtt
+├── ft_userdata
+│   └── user_data
+├── jupyter
+│   └── python_modules
+├── nginx
+├── notebooks
+│   ├── datasets
+│   ├── modules
+│   ├── other
+│   └── tests
+├── pihole
+│   ├── etc-dnsmasq.d
+│   └── etc-pihole
+├── portainer
+│   └── data
+├── scripts
+└── www
+    └── content
+```
+
+#### Home Assistant
+
+To see on which ports the devices RFXCom and ZWave are located, check the ``/dev/serial/by-id/`` directory:
+
+```
+ls -alh /dev/serial/by-id/
+total 0
+drwxr-xr-x 2 root root 80 Jul 25 11:39 .
+drwxr-xr-x 4 root root 80 Jul 25 10:33 ..
+lrwxrwxrwx 1 root root 13 Jul 25 10:33 usb-0658_0200-if00 -> ../../ttyACM0
+lrwxrwxrwx 1 root root 13 Jul 25 11:39 usb-RFXCOM_RFXtrx433XL_DO2ZY2AK-if00-port0 -> ../../ttyUSB0
+```
+
+Restart HASS if there seems to be any problem with it...
 
 ## Downloading backups of configuration files from a network share
 
@@ -766,3 +830,21 @@ See [Bitcoinlottery github repo](https://github.com/Willemstijn/BitcoinLottery).
 ## CandleHoarder
 
 See [CandleHoarder github repo](https://github.com/Willemstijn/CandleHoarder).
+
+# Ports
+
+The following services and ports are used on the server:
+
+| Outside Port | Inside port (Docker) | Service (container) | Remarks |
+|:-:|:-:|:-|:-|
+| 80 | 80 | nginx | Proxying webserver, also with Wiki |
+| 8123 | 8123 | Home assistant | Domotica service |
+|  |  |  |  |
+|  |  |  |  |
+| 9000 | 9000 | Portainer | Docker container management |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
